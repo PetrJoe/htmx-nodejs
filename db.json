@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "title": "First Item",
+      "description": "Description for first item",
+      "created_at": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Second Item", 
+      "description": "Description for second item",
+      "created_at": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
