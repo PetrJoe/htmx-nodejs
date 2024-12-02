@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA with Tailwind CSS and HTMX</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add loading indicator styles -->
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+        .htmx-request.htmx-indicator { display: inline-block; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <nav class="bg-blue-600 p-4 shadow-md text-white">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-lg font-bold cursor-pointer hover:text-gray-200">My SPA</div>
+            <div class="space-x-4">
+                <a 
+                    hx-get="/content/home.html" 
+                    hx-target="#content" 
+                    hx-indicator="#loading"
+                    hx-swap="outerHTML transition:true"
+                    class="hover:text-gray-200 px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">Home</a>
+                <a 
+                    hx-get="/content/about.html" 
+                    hx-target="#content"
+                    hx-indicator="#loading"
+                    hx-swap="outerHTML transition:true"
+                    class="hover:text-gray-200 px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">About</a>
+                <a 
+                    hx-get="/content/contact.html" 
+                    hx-target="#content"
+                    hx-indicator="#loading"
+                    hx-swap="outerHTML transition:true"
+                    class="hover:text-gray-200 px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">Contact</a>
+
+                <a 
+                    hx-get="/api/items" 
+                    hx-target="#content" 
+                    hx-indicator="#loading"
+                    hx-swap="outerHTML transition:true"
+                    class="hover:text-gray-200 px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">View Items</a>
+                <a 
+                    hx-get="/content/add-item.html" 
+                    hx-target="#content"
+                    hx-indicator="#loading"
+                    hx-swap="outerHTML transition:true"
+                    class="hover:text-gray-200 px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">Add Item</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Loading Indicator -->
+    <div id="loading" class="htmx-indicator fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-4 py-2 rounded shadow">
+        Loading...
+    </div>
+
+    <!-- Error Toast -->
+    <div id="error-toast" class="hidden fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg">
+        Failed to load content. Please try again.
+    </div>
+
+    <main class="w-full">
+        <div id="content" 
+             class="bg-white p-6 rounded shadow-lg min-h-[200px]"
+             hx-get="/content/home.html"
+             hx-trigger="load"
+             hx-on::after-request-error="document.getElementById('error-toast').classList.remove('hidden')"
+             hx-on::after-request="setTimeout(() => document.getElementById('error-toast').classList.add('hidden'), 3000)">
+        </div>
+    </main>
+
+
+    <!-- Active link handling -->
+    <script>
+        document.body.addEventListener('htmx:afterOnLoad', function() {
+            const links = document.querySelectorAll('a');
+            links.forEach(link => link.classList.remove('bg-blue-700'));
+            const currentPath = window.location.pathname;
+            const activeLink = document.querySelector(`a[hx-get="${currentPath}"]`);
+            if (activeLink) activeLink.classList.add('bg-blue-700');
+        });
+    </script>
+</body>
+</html>
